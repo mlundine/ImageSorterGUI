@@ -26,18 +26,28 @@ class Window(QMainWindow):
         self.setWindowTitle("Image Sorter")
         self.home()
 
-    def open_image(self, image_path, old_label=None):
-        if old_label!=None:
-            old_label.hide()
-        label = QLabel(self)
+    def open_image(self, image_path, lab):
+        global image_lab
+        image_lab=lab
+        try:
+            image_lab.hide()
+        except:
+            pass
+        
+        image_lab = QLabel(self)
         pixmap = QPixmap(image_path)
+        im_width = pixmap.width()
+        im_height = pixmap.height()
+        max_dim = max(im_width, im_height)
+        max_screen = max(screenWidth, screenHeight)
+        max_scale = int(max_screen/max_dim)
         scaleFac = 1
-        small_pixmap = pixmap.scaled(int(screenWidth/2), int(screenWidth/2))
-        label.setPixmap(small_pixmap)
-        label.resize(int(pixmap.width()/scaleFac),int(pixmap.height()/scaleFac))
-        self.vbox.addWidget(label, 1, 1)
-        label.show()
-        return label
+        small_pixmap = pixmap.scaled(im_width*max_scale, im_height*max_scale)
+        image_lab.setPixmap(small_pixmap)
+        image_lab.resize(int(pixmap.width()/scaleFac),int(pixmap.height()/scaleFac))
+        self.vbox.addWidget(image_lab, 1, 1)
+        image_lab.show()
+        return image_lab
 
     def sort_image(self, class_label, image_path):
         """do stuff"""
@@ -55,7 +65,7 @@ class Window(QMainWindow):
         idx = i+1
         global current_image
         current_image = image_paths[idx]
-        self.open_image(current_image, old_label=image_lab)
+        self.open_image(current_image, image_lab)
         
     def select_folder(self, classes):
         global idx
@@ -69,12 +79,14 @@ class Window(QMainWindow):
             image_paths = glob.glob(folderName + '/*.jpg')
             global current_image
             current_image = image_paths[idx]
-            image_lab = self.open_image(current_image)
+            global image_lab
+            image_lab = QLabel()
+            image_lab = self.open_image(current_image, image_lab)
             i=0
             buttons = [None]*len(classes)
             for c in classes:
                 b = QPushButton(c)
-                self.vbox.addWidget(b, 2, i)
+                self.vbox.addWidget(b, i, 2)
                 buttons[i] = b
                 i=i+1
             
@@ -102,7 +114,7 @@ class Window(QMainWindow):
         self.widget.setLayout(self.vbox)
 
         ##specify class labels here, these are classes for coastal satellite imagery
-        classes = ['clear', 'whitewater', 'snow_ice', 'warped_color_space', 'big_gaps', 'other']
+        classes = ['clear', 'cloudy', 'whitewater', 'snow_ice', 'warped_color_space', 'big_gaps', 'other']
 
         open_directory = QPushButton('Select Image Directory')
         self.vbox.addWidget(open_directory, 0, 0)
