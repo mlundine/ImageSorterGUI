@@ -1,5 +1,5 @@
 """
-Bare bones interface for sorting coastal satellite imagery
+Bare bones interface for sorting imagery
 Mark Lundine, UGSG
 """
 
@@ -108,20 +108,10 @@ class Window(QMainWindow):
             next_image.clicked.connect(lambda: self.get_next_image(idx, image_paths, image_lab))
             #undo.clicked.connect(lambda: self.undo(image_path, new_image_path)
             ##class label buttons, if you add another class label, add another button click connection
-            #clear
+            #good
             buttons[0].clicked.connect(lambda: self.sort_image(classes[0], current_image))
-            #cloudy
+            #bad
             buttons[1].clicked.connect(lambda: self.sort_image(classes[1], current_image))
-            #whitewater
-            buttons[2].clicked.connect(lambda: self.sort_image(classes[2], current_image))
-            #snow_ice
-            buttons[3].clicked.connect(lambda: self.sort_image(classes[3], current_image))
-            #warped_color_space
-            buttons[4].clicked.connect(lambda: self.sort_image(classes[4], current_image))
-            #big_gaps
-            buttons[5].clicked.connect(lambda: self.sort_image(classes[5], current_image))
-            #other
-            buttons[6].clicked.connect(lambda: self.sort_image(classes[6], current_image))
         
     def home(self):
         self.scroll = QScrollArea()             # Scroll Area which contains the widgets, set as the centralWidget
@@ -130,7 +120,7 @@ class Window(QMainWindow):
         self.widget.setLayout(self.vbox)
 
         ##specify class labels here, these are classes for coastal satellite imagery
-        classes = ['clear', 'cloudy', 'whitewater', 'snow_ice', 'warped_color_space', 'big_gaps', 'other']
+        classes = ['good', 'bad']
 
         open_directory = QPushButton('Select Image Directory')
         self.vbox.addWidget(open_directory, 0, 0)
